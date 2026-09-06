@@ -150,3 +150,54 @@ size — with no actual upload/storage), and anything beyond the four-stage
 status pipeline (Pending → In Progress → Quality Check → Completed, with
 Cancelled as a side exit). These were cut to keep the core loop — submit,
 queue, update, watch it live — solid rather than spreading thin.
+
+## Pipeline Architecture
+``` 
+                    ┌──────────────┐
+                    │ GitHub event │
+                    └──────┬───────┘
+                           │
+                    push main / PR
+                           │
+                           ↓
+                    ┌──────────────┐
+                    │     CI       │
+                    └──────┬───────┘
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+          ↓                ↓                ↓
+   Backend tests    Frontend tests   Notifications tests
+          │                │                │
+          │                │                │
+     PostgreSQL        TypeScript          Jest
+     migrations          Jest
+       pytest           build
+          │                │                │
+          └────────────────┼────────────────┘
+                           │
+                    ALL MUST PASS
+                           │
+                           ↓
+                 ┌──────────────────┐
+                 │  Build Docker    │
+                 │     Images       │
+                 └────────┬─────────┘
+                          │
+              ┌───────────┼───────────┐
+              ↓           ↓           ↓
+          Backend      Frontend   Notifications
+           image         image        image
+              │           │           │
+              └───────────┼───────────┘
+                          │
+                     push: false
+                          │
+                     ❌ Registry
+                          │
+                          ↓
+                  ┌──────────────┐
+                  │    Deploy    │
+                  │  DISABLED    │
+                  └──────────────┘
+````
