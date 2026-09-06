@@ -14,7 +14,8 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_DB: manuflow
+          # we should use github secrets for following. here its' just for local dev
+          POSTGRES_DB: manuflow 
           POSTGRES_USER: manuflow
           POSTGRES_PASSWORD: manuflow
         ports:
