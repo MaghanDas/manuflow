@@ -143,9 +143,7 @@ jobs:
           push: false
           tags: manuflow-notifications:${{ github.sha }}
 
-  # Deploy is intentionally left as a template: wire in your registry
-  # credentials and target (EC2 / Cloud Run / k8s) as repository secrets,
-  # then uncomment and fill in the steps below.
+  # Deploy is intentionally left as a template after demonstrations.
   deploy:
     name: Deploy (template - disabled)
     runs-on: ubuntu-latest
